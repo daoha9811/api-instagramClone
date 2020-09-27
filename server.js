@@ -5,6 +5,7 @@
 // but feel free to use whatever libraries or frameworks you'd like through `package.json`.
 const express = require("express");
 const bodyParser = require("body-parser");
+const socket = require("socket.io");
 const mongoose = require("mongoose");
 const cors = require("cors");
 //connectdb
@@ -31,18 +32,33 @@ mongoose.connection
   });
 
 const app = express();
+const http = require("http").Server(app);
+const io = socket(http);
+const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
+
+io.on("connection", socket => {
+  socket.on(NEW_CHAT_MESSAGE_EVENT, data => {
+    io.emmit(NEW_CHAT_MESSAGE_EVENT, data);
+  });
+  console.log(`co nguoi ket noi ${socket.id}`);
+});
+
+app.use((req, res, next) => {
+  res.io = io;
+  next();
+});
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-
 
 app.use(express.static("public"));
 
 app.use(cors());
 
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   res.status(200).send("hello");
-})
+  console.log("hello");
+});
 
 app.use("/api", apiRoute);
 
