@@ -197,7 +197,8 @@ module.exports.postUpload = async (req, res, next) => {
       );
 
       res.status(200).json({
-        status: "success"
+        status: "success",
+        url: cloudinaryResponse.url
       });
       
       fs.unlink(path, (err, data) => {});
@@ -288,3 +289,7 @@ module.exports.postComment = async (req, res, next) => {
     res.json({ errors: error.message });
   }
 };
+
+module.exports.sendChat = (req, res) => {
+  req.io.emmit('SEND_CHAT')
+}

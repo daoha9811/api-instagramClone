@@ -25,4 +25,6 @@ router.post('/avatar',upload.single("avatar"), apiControllers.postAvatar);
 
 router.post('/comment', apiControllers.postComment);
 
+router.post('/chat/:id', apiControllers.sendChat)
+
 module.exports = router;
